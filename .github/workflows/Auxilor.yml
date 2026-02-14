@@ -1,4 +1,4 @@
-name: "Xây dựng EcoEnchants (Bản chuẩn cấu trúc Auxilor)"
+name: "Xây dựng EcoEnchants (Chỉ định Platform)"
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: "Bước 2: Build LibreForge (Thư viện nền tảng)"
+      - name: "Bước 2: Build LibreForge (Thư viện bắt buộc)"
         run: |
           git clone https://github.com/Auxilor/LibreForge.git
           cd LibreForge
@@ -22,29 +22,24 @@ jobs:
           ./gradlew publishToMavenLocal -x test
           cd ..
 
-      - name: "Bước 3: Tải mã nguồn EcoEnchants & Submodules"
+      - name: "Bước 3: Tải mã nguồn EcoEnchants"
         uses: actions/checkout@v4
         with:
           repository: Auxilor/EcoEnchants
-          submodules: 'recursive' # Bắt buộc phải có để lấy eco-core
+          submodules: 'recursive'
           fetch-depth: 0
 
-      - name: "Bước 4: Liệt kê Projects & Build ShadowJar"
-        # Chúng ta dùng 'shadowJar' cho toàn bộ dự án để đảm bảo module nào chứa plugin sẽ được đóng gói
+      - name: "Bước 4: Build ShadowJar cho Module Platform"
+        # Auxilor đặt module chạy plugin là 'platform'
+        # Chúng ta dùng --stacktrace để bắt lỗi nếu nó dám fail
         run: |
           chmod +x gradlew
-          ./gradlew projects # Hiển thị danh sách module để kiểm tra trong log
-          ./gradlew shadowJar --no-daemon -x test || ./gradlew assemble --no-daemon -x test
+          ./gradlew :platform:shadowJar --no-daemon -x test --stacktrace
 
-      - name: "Bước 5: Xuất file JAR (Lọc thủ công file đúng)"
+      - name: "Bước 5: Xuất file JAR (Lấy đúng file Platform)"
         uses: actions/upload-artifact@v4
         with:
-          name: EcoEnchants-Verified-Build
-          # Chúng ta lấy tất cả các file có đuôi -all.jar hoặc các file JAR lớn hơn 1MB
-          # Điều này loại bỏ các file JAR rỗng 477KB bạn đã gặp
-          path: |
-            **/build/libs/*.jar
-            !build/libs/*.jar
-            !**/build/libs/*-sources.jar
-            !**/build/libs/*-javadoc.jar
+          name: EcoEnchants-Real-Plugin
+          # Chỉ lấy file JAR từ module platform, đây mới là file có code
+          path: "platform/build/libs/*-all.jar"
           if-no-files-found: error
