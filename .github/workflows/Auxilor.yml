@@ -1,4 +1,4 @@
-name: "Xây dựng EcoEnchants (Bản sửa lỗi Checkout)"
+name: "Xây dựng EcoEnchants (Phiên bản ổn định nhất)"
 
 on:
   workflow_dispatch:
@@ -8,24 +8,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Bước 1 phải là Checkout, nếu không các bước sau sẽ không thấy file cấu hình
-      - name: "Bước 1: Tải mã nguồn EcoEnchants"
-        uses: actions/checkout@v4
-        with:
-          repository: Auxilor/EcoEnchants
-          submodules: 'recursive'
-          fetch-depth: 0
-
-      - name: "Bước 2: Thiết lập Java 21"
+      # Bước 1: Thiết lập môi trường Java trước nhưng KHÔNG dùng cache tự động
+      - name: "Thiết lập môi trường Java 21"
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
-          # Chúng ta tạm bỏ 'cache: gradle' ở đây nếu Repo hiện tại của bạn không có file gradle gốc
-          # để tránh lỗi "No file matched" như trên.
-          
-      - name: "Bước 3: Tự build LibreForge (Dependency bị thiếu)"
-        # Chúng ta build LibreForge và cài vào mavenLocal để EcoEnchants có thể sử dụng
+          # Tắt cache để tránh lỗi "No file matched" khi repo của bạn trống
+          # cache: 'gradle' 
+
+      - name: "Bước 2: Tải mã nguồn LibreForge và Cài đặt cục bộ"
+        # Chúng ta build thư viện lõi trước để làm nền tảng
         run: |
           git clone https://github.com/Auxilor/LibreForge.git
           cd LibreForge
@@ -33,14 +26,23 @@ jobs:
           ./gradlew publishToMavenLocal -x test
           cd ..
 
+      - name: "Bước 3: Tải mã nguồn EcoEnchants"
+        uses: actions/checkout@v4
+        with:
+          repository: Auxilor/EcoEnchants
+          submodules: 'recursive'
+          fetch-depth: 0
+
       - name: "Bước 4: Cấp quyền và Build EcoEnchants"
+        # Sử dụng --no-daemon để tiết kiệm tài nguyên máy ảo
         run: |
           chmod +x gradlew
           ./gradlew assemble --no-daemon -x test
 
-      - name: "Bước 5: Lưu trữ sản phẩm (.jar)"
+      - name: "Bước 5: Xuất file sản phẩm (.jar)"
         uses: actions/upload-artifact@v4
         with:
-          name: EcoEnchants-Final-Jar
+          name: EcoEnchants-Plugin-Jar
+          # Quét sâu để lấy file jar cuối cùng
           path: "**/build/libs/*.jar"
           if-no-files-found: error
