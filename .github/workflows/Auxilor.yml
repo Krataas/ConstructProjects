@@ -10,12 +10,21 @@ on:
 
 jobs:
   EcoJobs:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main 
+    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
     with:
       repository: "Auxilor/EcoJobs"
       target: "bin/*"
       name: "EcoJobs"
-      java: '21' # Upgrade from 16 to 21
+      java:
+        default: '21'  # Update this from '16' to '21'
+        required: false
+        type: string
+      commands:
+        default: |
+          mkdir -p ~/.gradle/init.d
+          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
+        required: false
+        type: string
       distribution: 'temurin'
       tasks: 'build --refresh-dependencies'
       readonly: true
@@ -25,7 +34,16 @@ jobs:
       repository: "Auxilor/EcoPets"
       target: "bin/*"
       name: "EcoPets"
-      java: '21' # Upgrade from 16 to 21
+      java:
+        default: '21'  # Update this from '16' to '21'
+        required: false
+        type: string
+      commands:
+        default: |
+          mkdir -p ~/.gradle/init.d
+          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
+        required: false
+        type: string
       distribution: 'temurin'
       tasks: 'build --refresh-dependencies'
       readonly: true
@@ -35,7 +53,16 @@ jobs:
       repository: "Auxilor/EcoCrates"
       target: "bin/*"
       name: "EcoCrates"
-      java: '21' # Upgrade from 16 to 21
+      java:
+        default: '21'  # Update this from '16' to '21'
+        required: false
+        type: string
+      commands:
+        default: |
+          mkdir -p ~/.gradle/init.d
+          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
+        required: false
+        type: string
       distribution: 'temurin'
       tasks: 'build --refresh-dependencies'
       readonly: true
@@ -45,7 +72,16 @@ jobs:
       repository: "Auxilor/EcoBosses"
       target: "bin/*"
       name: "EcoBosses"
-      java: '21' # Upgrade from 16 to 21
+      java:
+        default: '21'  # Update this from '16' to '21'
+        required: false
+        type: string
+      commands:
+        default: |
+          mkdir -p ~/.gradle/init.d
+          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
+        required: false
+        type: string
       distribution: 'temurin'
       tasks: 'build --refresh-dependencies'
       readonly: true
@@ -55,7 +91,16 @@ jobs:
       repository: "Auxilor/EcoEnchants"
       target: "bin/*"
       name: "EcoEnchants"
-      java: '21' # Upgrade from 16 to 21
+      java:
+        default: '21'  # Update this from '16' to '21'
+        required: false
+        type: string
+      commands:
+        default: |
+          mkdir -p ~/.gradle/init.d
+          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
+        required: false
+        type: string
       distribution: 'temurin'
       tasks: 'build --refresh-dependencies'
       readonly: true
@@ -65,7 +110,16 @@ jobs:
       repository: "Auxilor/EcoSkills"
       target: "bin/*"
       name: "EcoSkills"
-      java: '21' # Upgrade from 16 to 21
+      java:
+        default: '21'  # Update this from '16' to '21'
+        required: false
+        type: string
+      commands:
+        default: |
+          mkdir -p ~/.gradle/init.d
+          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
+        required: false
+        type: string
       distribution: 'temurin'
       tasks: 'build --refresh-dependencies'
       readonly: true
@@ -75,7 +129,16 @@ jobs:
       repository: "Auxilor/Reforges"
       target: "bin/*"
       name: "Reforges"
-      java: '21' # Upgrade from 16 to 21
+      java:
+        default: '21'  # Update this from '16' to '21'
+        required: false
+        type: string
+      commands:
+        default: |
+          mkdir -p ~/.gradle/init.d
+          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
+        required: false
+        type: string
       distribution: 'temurin'
       tasks: 'build --refresh-dependencies'
       readonly: true
@@ -85,7 +148,16 @@ jobs:
       repository: "Auxilor/EcoWeapons"
       target: "bin/*"
       name: "EcoWeapons"
-      java: '21' # Upgrade from 16 to 21
+      java:
+        default: '21'  # Update this from '16' to '21'
+        required: false
+        type: string
+      commands:
+        default: |
+          mkdir -p ~/.gradle/init.d
+          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
+        required: false
+        type: string
       distribution: 'temurin'
       tasks: 'build --refresh-dependencies'
       readonly: true
@@ -95,7 +167,16 @@ jobs:
       repository: "Auxilor/Talismans"
       target: "bin/*"
       name: "Talismans"
-      java: '21' # Upgrade from 16 to 21
+      java:
+        default: '21'  # Update this from '16' to '21'
+        required: false
+        type: string
+      commands:
+        default: |
+          mkdir -p ~/.gradle/init.d
+          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
+        required: false
+        type: string
       distribution: 'temurin'
       tasks: 'build --refresh-dependencies'
       readonly: true
@@ -105,7 +186,16 @@ jobs:
       repository: "Auxilor/EcoArmor"
       target: "bin/*"
       name: "EcoArmor"
-      java: '21' # Upgrade from 16 to 21
+      java:
+        default: '21'  # Update this from '16' to '21'
+        required: false
+        type: string
+      commands:
+        default: |
+          mkdir -p ~/.gradle/init.d
+          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
+        required: false
+        type: string
       distribution: 'temurin'
       tasks: 'build --refresh-dependencies'
       readonly: true
@@ -115,7 +205,16 @@ jobs:
       repository: "Auxilor/EcoItems"
       target: "bin/*"
       name: "EcoItems"
-      java: '21' # Upgrade from 16 to 21
+      java:
+        default: '21'  # Update this from '16' to '21'
+        required: false
+        type: string
+      commands:
+        default: |
+          mkdir -p ~/.gradle/init.d
+          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
+        required: false
+        type: string
       distribution: 'temurin'
       tasks: 'build --refresh-dependencies'
       readonly: true
@@ -125,7 +224,16 @@ jobs:
       repository: "Auxilor/StatTrackers"
       target: "bin/*"
       name: "StatTrackers"
-      java: '21' # Upgrade from 16 to 21
+      java:
+        default: '21'  # Update this from '16' to '21'
+        required: false
+        type: string
+      commands:
+        default: |
+          mkdir -p ~/.gradle/init.d
+          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
+        required: false
+        type: string
       distribution: 'temurin'
       tasks: 'build --refresh-dependencies'
       readonly: true
@@ -135,7 +243,16 @@ jobs:
       repository: "Auxilor/Boosters"
       target: "bin/*"
       name: "Boosters"
-      java: '21' # Upgrade from 16 to 21
+      java:
+        default: '21'  # Update this from '16' to '21'
+        required: false
+        type: string
+      commands:
+        default: |
+          mkdir -p ~/.gradle/init.d
+          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
+        required: false
+        type: string
       distribution: 'temurin'
       tasks: 'build --refresh-dependencies'
       readonly: true
@@ -145,7 +262,16 @@ jobs:
       repository: "Auxilor/Actions"
       target: "bin/*"
       name: "Actions"
-      java: '21' # Upgrade from 16 to 21
+      java:
+        default: '21'  # Update this from '16' to '21'
+        required: false
+        type: string
+      commands:
+        default: |
+          mkdir -p ~/.gradle/init.d
+          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
+        required: false
+        type: string
       distribution: 'temurin'
       tasks: 'build --refresh-dependencies'
       readonly: true
@@ -155,7 +281,16 @@ jobs:
       repository: "Auxilor/EcoShop"
       target: "bin/*"
       name: "EcoShop"
-      java: '21' # Upgrade from 16 to 21
+      java:
+        default: '21'  # Update this from '16' to '21'
+        required: false
+        type: string
+      commands:
+        default: |
+          mkdir -p ~/.gradle/init.d
+          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
+        required: false
+        type: string
       distribution: 'temurin'
       tasks: 'build --refresh-dependencies'
       readonly: true
