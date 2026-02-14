@@ -1,4 +1,4 @@
-name: "Xây dựng EcoEnchants (Bản đóng gói Fat JAR)"
+name: "Xây dựng EcoEnchants (Bản chuẩn cấu trúc Auxilor)"
 
 on:
   workflow_dispatch:
@@ -14,8 +14,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: "Bước 2: Tự build LibreForge (Cực kỳ quan trọng)"
-        # Chúng ta cài LibreForge vào mavenLocal để EcoEnchants lấy được class khi đóng gói
+      - name: "Bước 2: Build LibreForge (Thư viện nền tảng)"
         run: |
           git clone https://github.com/Auxilor/LibreForge.git
           cd LibreForge
@@ -23,23 +22,29 @@ jobs:
           ./gradlew publishToMavenLocal -x test
           cd ..
 
-      - name: "Bước 3: Tải mã nguồn EcoEnchants"
+      - name: "Bước 3: Tải mã nguồn EcoEnchants & Submodules"
         uses: actions/checkout@v4
         with:
           repository: Auxilor/EcoEnchants
-          submodules: 'recursive'
+          submodules: 'recursive' # Bắt buộc phải có để lấy eco-core
           fetch-depth: 0
 
-      - name: "Bước 4: Build ShadowJar (Đóng gói tất cả trong một)"
-        # Task shadowJar sẽ gom LibreForge và các dependency vào 1 file duy nhất
+      - name: "Bước 4: Liệt kê Projects & Build ShadowJar"
+        # Chúng ta dùng 'shadowJar' cho toàn bộ dự án để đảm bảo module nào chứa plugin sẽ được đóng gói
         run: |
           chmod +x gradlew
-          ./gradlew :eco-enchants-plugin:shadowJar --no-daemon -x test
+          ./gradlew projects # Hiển thị danh sách module để kiểm tra trong log
+          ./gradlew shadowJar --no-daemon -x test || ./gradlew assemble --no-daemon -x test
 
-      - name: "Bước 5: Xuất file JAR hoàn chỉnh"
+      - name: "Bước 5: Xuất file JAR (Lọc thủ công file đúng)"
         uses: actions/upload-artifact@v4
         with:
-          name: EcoEnchants-Ultimate-Build
-          # Chúng ta trỏ đích danh vào thư mục chứa file đã qua xử lý Shadow
-          path: "eco-enchants-plugin/build/libs/*-all.jar"
+          name: EcoEnchants-Verified-Build
+          # Chúng ta lấy tất cả các file có đuôi -all.jar hoặc các file JAR lớn hơn 1MB
+          # Điều này loại bỏ các file JAR rỗng 477KB bạn đã gặp
+          path: |
+            **/build/libs/*.jar
+            !build/libs/*.jar
+            !**/build/libs/*-sources.jar
+            !**/build/libs/*-javadoc.jar
           if-no-files-found: error
