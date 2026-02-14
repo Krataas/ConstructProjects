@@ -1,9 +1,7 @@
-name: "Xây dựng EcoEnchants (Tối ưu hệ thống)"
+name: "Xây dựng EcoEnchants (Sửa lỗi Dependency)"
 
 on:
-  push:
-    branches: [ "master", "main" ]
-  workflow_dispatch: # Cho phép bạn bấm nút Build thủ công bất cứ lúc nào
+  workflow_dispatch:
 
 jobs:
   build:
@@ -14,8 +12,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Auxilor/EcoEnchants
-          # CỰC KỲ QUAN TRỌNG: EcoEnchants chứa eco-core dưới dạng submodule
-          submodules: 'recursive' 
+          submodules: 'recursive'
           fetch-depth: 0
 
       - name: "Bước 2: Thiết lập môi trường Java 21"
@@ -23,22 +20,23 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-          # Sử dụng cache để các lần build sau nhanh hơn
           cache: 'gradle'
 
-      - name: "Bước 3: Cấp quyền thực thi cho Gradle"
-        run: chmod +x gradlew
+      - name: "Bước 3: Sửa lỗi LibreForge (Hạ cấp phiên bản)"
+        # Chúng ta dùng lệnh sed để thay thế 4.80.0 bằng 4.79.0 (hoặc bản có sẵn gần nhất)
+        # Lệnh này sẽ quét toàn bộ các file .gradle và .kts để sửa version bị lỗi
+        run: |
+          find . -type f -name "*.gradle*" -exec sed -i 's/4.80.0/4.79.0/g' {} +
+          echo "Đã hạ cấp LibreForge từ 4.80.0 xuống 4.79.0 để tránh lỗi Repository."
 
-      - name: "Bước 4: Tiến hành Build chuyên sâu"
-        # --no-daemon giúp tránh lỗi bộ nhớ trên môi trường GitHub Actions
-        # -x test để bỏ qua các bài kiểm tra mã nguồn, giúp build nhanh và tránh lỗi logic không cần thiết
-        run: ./gradlew assemble --no-daemon -x test
+      - name: "Bước 4: Cấp quyền và Build"
+        run: |
+          chmod +x gradlew
+          ./gradlew assemble --no-daemon -x test
 
-      - name: "Bước 5: Thu thập và Lưu trữ Plugin (.jar)"
+      - name: "Bước 5: Lưu trữ sản phẩm (.jar)"
         uses: actions/upload-artifact@v4
         with:
-          name: EcoEnchants-Build-Thanh-Cong
-          # Đường dẫn này sẽ quét tất cả các file jar được tạo ra trong thư mục build
+          name: EcoEnchants-Build-Fixed
           path: "**/build/libs/*.jar"
-          # Nếu không tìm thấy file, Action sẽ báo lỗi ngay để bạn biết
           if-no-files-found: error
