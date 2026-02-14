@@ -1,4 +1,4 @@
-name: "Xây dựng EcoEnchants (Bản lọc sạch)"
+name: "Build EcoEnchants - Chuẩn ConstructProjects 2026"
 
 on:
   workflow_dispatch:
@@ -6,55 +6,45 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: "Bước 1: Thiết lập Java 21"
+      - name: "Cài đặt Java"
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: "Bước 2: Build LibreForge (Thư viện nền)"
+      - name: "Build LibreForge (MavenLocal)"
         run: |
           git clone https://github.com/Auxilor/LibreForge.git
-          cd LibreForge
-          chmod +x gradlew
-          ./gradlew publishToMavenLocal -x test
+          cd LibreForge && chmod +x gradlew && ./gradlew publishToMavenLocal -x test
           cd ..
 
-      - name: "Bước 3: Tải mã nguồn EcoEnchants & Submodules"
+      - name: "Checkout EcoEnchants"
         uses: actions/checkout@v4
         with:
           repository: Auxilor/EcoEnchants
           submodules: 'recursive'
           fetch-depth: 0
 
-      - name: "Bước 4: Build tổng lực"
+      - name: "Build với lệnh đặc biệt Reobf"
+        # Thay vì assemble, ta dùng reobfJar để ép nó đóng gói mã nguồn đã remap
         run: |
           chmod +x gradlew
-          # build thay vì assemble để kích hoạt các plugin đóng gói sâu hơn
-          ./gradlew build -x test --no-daemon
+          ./gradlew reobfJar --no-daemon -x test
 
-      - name: "Bước 5: Lọc file Plugin chính chủ"
-        # Chiến thuật: Tìm file .jar trong các thư mục build/libs/ 
-        # NHƯNG phải có chữ 'EcoEnchants' trong tên và KHÔNG chứa 'mapped', 'mojang', 'paper'
+      - name: "Hốt file theo kiểu HSGamer (Nhưng thông minh hơn)"
         run: |
-          mkdir -p final_output
-          find . -name "*.jar" -path "*/build/libs/*" -type f -size +1M \
-            -iname "*EcoEnchants*" \
-            ! -iname "*mapped*" \
-            ! -iname "*mojang*" \
-            ! -iname "*paper*" \
-            ! -iname "*-sources*" \
-            ! -iname "*-javadoc*" \
-            -exec cp {} final_output/ \;
+          mkdir -p output
+          # Tìm các file JAR nằm trong thư mục mang tên 'plugin' 
+          # và phải có dung lượng lớn (loại bỏ mấy file mapping vài trăm KB)
+          find . -type f -name "*.jar" -size +2M -path "*/build/libs/*" -exec cp {} output/ \;
           
-          echo "Các file JAR tìm thấy sau khi lọc:"
-          ls -lh final_output/
+          # Đổi tên cho dễ nhận biết
+          cd output
+          for f in *.jar; do mv "$f" "EcoEnchants-Pro-Build.jar"; break; done
 
-      - name: "Bước 6: Xuất Plugin"
+      - name: "Upload sản phẩm"
         uses: actions/upload-artifact@v4
         with:
-          name: EcoEnchants-Final-Plugin
-          path: final_output/*.jar
-          if-no-files-found: error
+          name: EcoEnchants-Plugin
+          path: output/*.jar
