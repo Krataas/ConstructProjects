@@ -1,4 +1,4 @@
-name: "Xây dựng EcoEnchants (Bản sửa lỗi Module)"
+name: "Xây dựng EcoEnchants (Sửa lỗi Path Artifact)"
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: "Bước 2: Tự build LibreForge (Dependency bắt buộc)"
+      - name: "Bước 2: Build LibreForge (Thư viện nền tảng)"
         run: |
           git clone https://github.com/Auxilor/LibreForge.git
           cd LibreForge
@@ -29,18 +29,21 @@ jobs:
           submodules: 'recursive'
           fetch-depth: 0
 
-      - name: "Bước 4: Cấp quyền và Build Chuyên sâu"
-        # 1. Chúng ta dùng 'shadowJar' (nếu có) hoặc build module 'plugin' cụ thể
-        # 2. Loại bỏ các file jar rỗng bằng cách chỉ lấy file trong thư mục build của module chính
+      - name: "Bước 4: Build EcoEnchants"
+        # Thử build tất cả các module để đảm bảo không sót
         run: |
           chmod +x gradlew
-          ./gradlew :plugin:shadowJar || ./gradlew :plugin:assemble || ./gradlew assemble --no-daemon -x test
+          ./gradlew assemble --no-daemon -x test
 
-      - name: "Bước 5: Lưu trữ sản phẩm (.jar)"
+      - name: "Bước 5: Tìm và Xuất file JAR (Tự động lọc file rác)"
         uses: actions/upload-artifact@v4
         with:
-          name: EcoEnchants-Full-Plugin
-          # Chỉ lấy file JAR nặng nhất (thường là file chứa code) 
-          # Tránh lấy các file jar ở root project chỉ có META-INF
-          path: "plugin/build/libs/*.jar"
+          name: EcoEnchants-Final-Jar
+          # Thay vì trỏ cứng vào 'plugin', ta quét tất cả nhưng loại bỏ các folder không cần thiết
+          # Cách này sẽ lấy các file JAR trong các module con (như eco-enchants-plugin)
+          path: |
+            **/build/libs/*.jar
+            !build/libs/*.jar
+            !**/build/libs/*-sources.jar
+            !**/build/libs/*-javadoc.jar
           if-no-files-found: error
