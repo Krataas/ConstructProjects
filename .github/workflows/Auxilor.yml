@@ -1,4 +1,4 @@
-name: "Xây dựng EcoEnchants (Phiên bản ổn định nhất)"
+name: "Xây dựng EcoEnchants (Bản sửa lỗi Module)"
 
 on:
   workflow_dispatch:
@@ -8,17 +8,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Bước 1: Thiết lập môi trường Java trước nhưng KHÔNG dùng cache tự động
-      - name: "Thiết lập môi trường Java 21"
+      - name: "Bước 1: Thiết lập Java 21"
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
-          # Tắt cache để tránh lỗi "No file matched" khi repo của bạn trống
-          # cache: 'gradle' 
 
-      - name: "Bước 2: Tải mã nguồn LibreForge và Cài đặt cục bộ"
-        # Chúng ta build thư viện lõi trước để làm nền tảng
+      - name: "Bước 2: Tự build LibreForge (Dependency bắt buộc)"
         run: |
           git clone https://github.com/Auxilor/LibreForge.git
           cd LibreForge
@@ -33,16 +29,18 @@ jobs:
           submodules: 'recursive'
           fetch-depth: 0
 
-      - name: "Bước 4: Cấp quyền và Build EcoEnchants"
-        # Sử dụng --no-daemon để tiết kiệm tài nguyên máy ảo
+      - name: "Bước 4: Cấp quyền và Build Chuyên sâu"
+        # 1. Chúng ta dùng 'shadowJar' (nếu có) hoặc build module 'plugin' cụ thể
+        # 2. Loại bỏ các file jar rỗng bằng cách chỉ lấy file trong thư mục build của module chính
         run: |
           chmod +x gradlew
-          ./gradlew assemble --no-daemon -x test
+          ./gradlew :plugin:shadowJar || ./gradlew :plugin:assemble || ./gradlew assemble --no-daemon -x test
 
-      - name: "Bước 5: Xuất file sản phẩm (.jar)"
+      - name: "Bước 5: Lưu trữ sản phẩm (.jar)"
         uses: actions/upload-artifact@v4
         with:
-          name: EcoEnchants-Plugin-Jar
-          # Quét sâu để lấy file jar cuối cùng
-          path: "**/build/libs/*.jar"
+          name: EcoEnchants-Full-Plugin
+          # Chỉ lấy file JAR nặng nhất (thường là file chứa code) 
+          # Tránh lấy các file jar ở root project chỉ có META-INF
+          path: "plugin/build/libs/*.jar"
           if-no-files-found: error
