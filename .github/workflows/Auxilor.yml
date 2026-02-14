@@ -15,7 +15,9 @@ jobs:
       repository: "Auxilor/EcoJobs"
       target: "bin/*"
       name: "EcoJobs"
-      java: 17
+      java: '21' # Upgrade from 16 to 21
+      distribution: 'temurin'
+      tasks: 'build --refresh-dependencies'
       readonly: true
   EcoPets:
     uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
@@ -23,7 +25,9 @@ jobs:
       repository: "Auxilor/EcoPets"
       target: "bin/*"
       name: "EcoPets"
-      java: 17
+      java: '21' # Upgrade from 16 to 21
+      distribution: 'temurin'
+      tasks: 'build --refresh-dependencies'
       readonly: true
   EcoCrates:
     uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
@@ -31,7 +35,9 @@ jobs:
       repository: "Auxilor/EcoCrates"
       target: "bin/*"
       name: "EcoCrates"
-      java: 17
+      java: '21' # Upgrade from 16 to 21
+      distribution: 'temurin'
+      tasks: 'build --refresh-dependencies'
       readonly: true
   EcoBosses:
     uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
@@ -39,7 +45,9 @@ jobs:
       repository: "Auxilor/EcoBosses"
       target: "bin/*"
       name: "EcoBosses"
-      java: 17
+      java: '21' # Upgrade from 16 to 21
+      distribution: 'temurin'
+      tasks: 'build --refresh-dependencies'
       readonly: true
   EcoEnchants:
     uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
@@ -47,7 +55,9 @@ jobs:
       repository: "Auxilor/EcoEnchants"
       target: "bin/*"
       name: "EcoEnchants"
-      java: 17
+      java: '21' # Upgrade from 16 to 21
+      distribution: 'temurin'
+      tasks: 'build --refresh-dependencies'
       readonly: true
   EcoSkills:
     uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
@@ -55,7 +65,9 @@ jobs:
       repository: "Auxilor/EcoSkills"
       target: "bin/*"
       name: "EcoSkills"
-      java: 17
+      java: '21' # Upgrade from 16 to 21
+      distribution: 'temurin'
+      tasks: 'build --refresh-dependencies'
       readonly: true
   Reforges:
     uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
@@ -63,7 +75,9 @@ jobs:
       repository: "Auxilor/Reforges"
       target: "bin/*"
       name: "Reforges"
-      java: 17
+      java: '21' # Upgrade from 16 to 21
+      distribution: 'temurin'
+      tasks: 'build --refresh-dependencies'
       readonly: true
   EcoWeapons:
     uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
@@ -71,7 +85,9 @@ jobs:
       repository: "Auxilor/EcoWeapons"
       target: "bin/*"
       name: "EcoWeapons"
-      java: 17
+      java: '21' # Upgrade from 16 to 21
+      distribution: 'temurin'
+      tasks: 'build --refresh-dependencies'
       readonly: true
   Talismans:
     uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
@@ -79,7 +95,9 @@ jobs:
       repository: "Auxilor/Talismans"
       target: "bin/*"
       name: "Talismans"
-      java: 17
+      java: '21' # Upgrade from 16 to 21
+      distribution: 'temurin'
+      tasks: 'build --refresh-dependencies'
       readonly: true
   EcoArmor:
     uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
@@ -87,7 +105,9 @@ jobs:
       repository: "Auxilor/EcoArmor"
       target: "bin/*"
       name: "EcoArmor"
-      java: 17
+      java: '21' # Upgrade from 16 to 21
+      distribution: 'temurin'
+      tasks: 'build --refresh-dependencies'
       readonly: true
   EcoItems:
     uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
@@ -95,7 +115,9 @@ jobs:
       repository: "Auxilor/EcoItems"
       target: "bin/*"
       name: "EcoItems"
-      java: 17
+      java: '21' # Upgrade from 16 to 21
+      distribution: 'temurin'
+      tasks: 'build --refresh-dependencies'
       readonly: true
   StatTrackers:
     uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
@@ -103,7 +125,9 @@ jobs:
       repository: "Auxilor/StatTrackers"
       target: "bin/*"
       name: "StatTrackers"
-      java: 17
+      java: '21' # Upgrade from 16 to 21
+      distribution: 'temurin'
+      tasks: 'build --refresh-dependencies'
       readonly: true
   Boosters:
     uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
@@ -111,7 +135,9 @@ jobs:
       repository: "Auxilor/Boosters"
       target: "bin/*"
       name: "Boosters"
-      java: 17
+      java: '21' # Upgrade from 16 to 21
+      distribution: 'temurin'
+      tasks: 'build --refresh-dependencies'
       readonly: true
   Actions:
     uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
@@ -119,7 +145,9 @@ jobs:
       repository: "Auxilor/Actions"
       target: "bin/*"
       name: "Actions"
-      java: 17
+      java: '21' # Upgrade from 16 to 21
+      distribution: 'temurin'
+      tasks: 'build --refresh-dependencies'
       readonly: true
   EcoShop:
     uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
@@ -127,5 +155,7 @@ jobs:
       repository: "Auxilor/EcoShop"
       target: "bin/*"
       name: "EcoShop"
-      java: 17
+      java: '21' # Upgrade from 16 to 21
+      distribution: 'temurin'
+      tasks: 'build --refresh-dependencies'
       readonly: true
