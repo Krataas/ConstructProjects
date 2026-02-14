@@ -1,4 +1,4 @@
-name: "Xây dựng EcoEnchants (Sửa lỗi Path Artifact)"
+name: "Xây dựng EcoEnchants (Bản đóng gói Fat JAR)"
 
 on:
   workflow_dispatch:
@@ -14,7 +14,8 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: "Bước 2: Build LibreForge (Thư viện nền tảng)"
+      - name: "Bước 2: Tự build LibreForge (Cực kỳ quan trọng)"
+        # Chúng ta cài LibreForge vào mavenLocal để EcoEnchants lấy được class khi đóng gói
         run: |
           git clone https://github.com/Auxilor/LibreForge.git
           cd LibreForge
@@ -29,21 +30,16 @@ jobs:
           submodules: 'recursive'
           fetch-depth: 0
 
-      - name: "Bước 4: Build EcoEnchants"
-        # Thử build tất cả các module để đảm bảo không sót
+      - name: "Bước 4: Build ShadowJar (Đóng gói tất cả trong một)"
+        # Task shadowJar sẽ gom LibreForge và các dependency vào 1 file duy nhất
         run: |
           chmod +x gradlew
-          ./gradlew assemble --no-daemon -x test
+          ./gradlew :eco-enchants-plugin:shadowJar --no-daemon -x test
 
-      - name: "Bước 5: Tìm và Xuất file JAR (Tự động lọc file rác)"
+      - name: "Bước 5: Xuất file JAR hoàn chỉnh"
         uses: actions/upload-artifact@v4
         with:
-          name: EcoEnchants-Final-Jar
-          # Thay vì trỏ cứng vào 'plugin', ta quét tất cả nhưng loại bỏ các folder không cần thiết
-          # Cách này sẽ lấy các file JAR trong các module con (như eco-enchants-plugin)
-          path: |
-            **/build/libs/*.jar
-            !build/libs/*.jar
-            !**/build/libs/*-sources.jar
-            !**/build/libs/*-javadoc.jar
+          name: EcoEnchants-Ultimate-Build
+          # Chúng ta trỏ đích danh vào thư mục chứa file đã qua xử lý Shadow
+          path: "eco-enchants-plugin/build/libs/*-all.jar"
           if-no-files-found: error
