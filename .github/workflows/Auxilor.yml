@@ -1,296 +1,36 @@
-name: Auxilor
+name: Tự động Build EcoEnchants
 
 on:
   push:
-    branches: [ main ]
-    paths:
-      - '.github/workflows/Auxilor.yml'
-  schedule:
-    - cron: '0 */6 * * *'
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+  workflow_dispatch: # Cho phép nhấn nút build thủ công
 
 jobs:
-  EcoJobs:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
-    with:
-      repository: "Auxilor/EcoJobs"
-      target: "bin/*"
-      name: "EcoJobs"
-      java:
-        default: '21'  # Update this from '16' to '21'
-        required: false
-        type: string
-      commands:
-        default: |
-          mkdir -p ~/.gradle/init.d
-          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
-        required: false
-        type: string
-      distribution: 'temurin'
-      tasks: 'build --refresh-dependencies'
-      readonly: true
-  EcoPets:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
-    with:
-      repository: "Auxilor/EcoPets"
-      target: "bin/*"
-      name: "EcoPets"
-      java:
-        default: '21'  # Update this from '16' to '21'
-        required: false
-        type: string
-      commands:
-        default: |
-          mkdir -p ~/.gradle/init.d
-          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
-        required: false
-        type: string
-      distribution: 'temurin'
-      tasks: 'build --refresh-dependencies'
-      readonly: true
-  EcoCrates:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
-    with:
-      repository: "Auxilor/EcoCrates"
-      target: "bin/*"
-      name: "EcoCrates"
-      java:
-        default: '21'  # Update this from '16' to '21'
-        required: false
-        type: string
-      commands:
-        default: |
-          mkdir -p ~/.gradle/init.d
-          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
-        required: false
-        type: string
-      distribution: 'temurin'
-      tasks: 'build --refresh-dependencies'
-      readonly: true
-  EcoBosses:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
-    with:
-      repository: "Auxilor/EcoBosses"
-      target: "bin/*"
-      name: "EcoBosses"
-      java:
-        default: '21'  # Update this from '16' to '21'
-        required: false
-        type: string
-      commands:
-        default: |
-          mkdir -p ~/.gradle/init.d
-          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
-        required: false
-        type: string
-      distribution: 'temurin'
-      tasks: 'build --refresh-dependencies'
-      readonly: true
-  EcoEnchants:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
-    with:
-      repository: "Auxilor/EcoEnchants"
-      target: "bin/*"
-      name: "EcoEnchants"
-      java:
-        default: '21'  # Update this from '16' to '21'
-        required: false
-        type: string
-      commands:
-        default: |
-          mkdir -p ~/.gradle/init.d
-          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
-        required: false
-        type: string
-      distribution: 'temurin'
-      tasks: 'build --refresh-dependencies'
-      readonly: true
-  EcoSkills:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
-    with:
-      repository: "Auxilor/EcoSkills"
-      target: "bin/*"
-      name: "EcoSkills"
-      java:
-        default: '21'  # Update this from '16' to '21'
-        required: false
-        type: string
-      commands:
-        default: |
-          mkdir -p ~/.gradle/init.d
-          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
-        required: false
-        type: string
-      distribution: 'temurin'
-      tasks: 'build --refresh-dependencies'
-      readonly: true
-  Reforges:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
-    with:
-      repository: "Auxilor/Reforges"
-      target: "bin/*"
-      name: "Reforges"
-      java:
-        default: '21'  # Update this from '16' to '21'
-        required: false
-        type: string
-      commands:
-        default: |
-          mkdir -p ~/.gradle/init.d
-          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
-        required: false
-        type: string
-      distribution: 'temurin'
-      tasks: 'build --refresh-dependencies'
-      readonly: true
-  EcoWeapons:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
-    with:
-      repository: "Auxilor/EcoWeapons"
-      target: "bin/*"
-      name: "EcoWeapons"
-      java:
-        default: '21'  # Update this from '16' to '21'
-        required: false
-        type: string
-      commands:
-        default: |
-          mkdir -p ~/.gradle/init.d
-          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
-        required: false
-        type: string
-      distribution: 'temurin'
-      tasks: 'build --refresh-dependencies'
-      readonly: true
-  Talismans:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
-    with:
-      repository: "Auxilor/Talismans"
-      target: "bin/*"
-      name: "Talismans"
-      java:
-        default: '21'  # Update this from '16' to '21'
-        required: false
-        type: string
-      commands:
-        default: |
-          mkdir -p ~/.gradle/init.d
-          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
-        required: false
-        type: string
-      distribution: 'temurin'
-      tasks: 'build --refresh-dependencies'
-      readonly: true
-  EcoArmor:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
-    with:
-      repository: "Auxilor/EcoArmor"
-      target: "bin/*"
-      name: "EcoArmor"
-      java:
-        default: '21'  # Update this from '16' to '21'
-        required: false
-        type: string
-      commands:
-        default: |
-          mkdir -p ~/.gradle/init.d
-          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
-        required: false
-        type: string
-      distribution: 'temurin'
-      tasks: 'build --refresh-dependencies'
-      readonly: true
-  EcoItems:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
-    with:
-      repository: "Auxilor/EcoItems"
-      target: "bin/*"
-      name: "EcoItems"
-      java:
-        default: '21'  # Update this from '16' to '21'
-        required: false
-        type: string
-      commands:
-        default: |
-          mkdir -p ~/.gradle/init.d
-          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
-        required: false
-        type: string
-      distribution: 'temurin'
-      tasks: 'build --refresh-dependencies'
-      readonly: true
-  StatTrackers:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
-    with:
-      repository: "Auxilor/StatTrackers"
-      target: "bin/*"
-      name: "StatTrackers"
-      java:
-        default: '21'  # Update this from '16' to '21'
-        required: false
-        type: string
-      commands:
-        default: |
-          mkdir -p ~/.gradle/init.d
-          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
-        required: false
-        type: string
-      distribution: 'temurin'
-      tasks: 'build --refresh-dependencies'
-      readonly: true
-  Boosters:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
-    with:
-      repository: "Auxilor/Boosters"
-      target: "bin/*"
-      name: "Boosters"
-      java:
-        default: '21'  # Update this from '16' to '21'
-        required: false
-        type: string
-      commands:
-        default: |
-          mkdir -p ~/.gradle/init.d
-          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
-        required: false
-        type: string
-      distribution: 'temurin'
-      tasks: 'build --refresh-dependencies'
-      readonly: true
-  Actions:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
-    with:
-      repository: "Auxilor/Actions"
-      target: "bin/*"
-      name: "Actions"
-      java:
-        default: '21'  # Update this from '16' to '21'
-        required: false
-        type: string
-      commands:
-        default: |
-          mkdir -p ~/.gradle/init.d
-          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
-        required: false
-        type: string
-      distribution: 'temurin'
-      tasks: 'build --refresh-dependencies'
-      readonly: true
-  EcoShop:
-    uses: HSGamer/ConstructProjects/.github/workflows/gradle-build.yml@main
-    with:
-      repository: "Auxilor/EcoShop"
-      target: "bin/*"
-      name: "EcoShop"
-      java:
-        default: '21'  # Update this from '16' to '21'
-        required: false
-        type: string
-      commands:
-        default: |
-          mkdir -p ~/.gradle/init.d
-          echo "allprojects { repositories { maven { url 'https://repo.auxilor.io/repository/maven-public/' } } }" > ~/.gradle/init.d/auxilor.init.gradle
-        required: false
-        type: string
-      distribution: 'temurin'
-      tasks: 'build --refresh-dependencies'
-      readonly: true
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Tải mã nguồn từ Repository"
+        uses: actions/checkout@v4
+
+      - name: "Thiết lập môi trường Java (JDK 21)"
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: "Cấp quyền thực thi cho Gradle Wrapper"
+        run: chmod +x gradlew
+
+      - name: "Tiến hành Build với Gradle"
+        run: ./gradlew build
+
+      - name: "Lưu trữ sản phẩm (Artifacts)"
+        uses: actions/upload-artifact@v4
+        with:
+          name: EcoEnchants-Plugin
+          path: build/libs/*.jar
+          if-no-files-found: error
