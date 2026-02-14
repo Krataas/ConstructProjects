@@ -1,4 +1,4 @@
-name: Tự động Build EcoEnchants
+name: Auxilor
 
 on:
   push:
