@@ -1,4 +1,4 @@
-name: "Xây dựng EcoEnchants (Chỉ định Platform)"
+name: "Xây dựng EcoEnchants (Phong cách ConstructProjects)"
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: "Bước 2: Build LibreForge (Thư viện bắt buộc)"
+      - name: "Bước 2: Tải LibreForge (Dependency nền tảng)"
         run: |
           git clone https://github.com/Auxilor/LibreForge.git
           cd LibreForge
@@ -22,24 +22,32 @@ jobs:
           ./gradlew publishToMavenLocal -x test
           cd ..
 
-      - name: "Bước 3: Tải mã nguồn EcoEnchants"
+      - name: "Bước 3: Tải mã nguồn EcoEnchants & Submodules"
         uses: actions/checkout@v4
         with:
           repository: Auxilor/EcoEnchants
           submodules: 'recursive'
           fetch-depth: 0
 
-      - name: "Bước 4: Build ShadowJar cho Module Platform"
-        # Auxilor đặt module chạy plugin là 'platform'
-        # Chúng ta dùng --stacktrace để bắt lỗi nếu nó dám fail
+      - name: "Bước 4: Build tổng lực (Phong cách HSGamer)"
+        # Chúng ta không dùng :platform hay :plugin nữa
+        # Thay vào đó, dùng lệnh assemble tổng quát và ép MavenLocal vào
         run: |
           chmod +x gradlew
-          ./gradlew :platform:shadowJar --no-daemon -x test --stacktrace
+          ./gradlew assemble --no-daemon -x test -Dmaven.repo.local=$HOME/.m2/repository
 
-      - name: "Bước 5: Xuất file JAR (Lấy đúng file Platform)"
+      - name: "Bước 5: Tìm kiếm và Phân loại sản phẩm"
+        # Thay vì đoán folder, chúng ta dùng lệnh tìm kiếm của Linux để liệt kê
+        # và chỉ lấy những file JAR có kích thước đáng tin cậy (> 2MB)
+        run: |
+          mkdir -p output
+          find . -name "*.jar" -type f -size +2M -exec cp {} output/ \;
+          echo "Danh sách các file đã tìm thấy:"
+          ls -lh output/
+
+      - name: "Bước 6: Xuất file JAR cuối cùng"
         uses: actions/upload-artifact@v4
         with:
-          name: EcoEnchants-Real-Plugin
-          # Chỉ lấy file JAR từ module platform, đây mới là file có code
-          path: "platform/build/libs/*-all.jar"
+          name: EcoEnchants-Package
+          path: output/*.jar
           if-no-files-found: error
