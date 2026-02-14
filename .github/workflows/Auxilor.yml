@@ -1,36 +1,33 @@
-name: Auxilor
+name: "Build EcoEnchants chuyên sâu"
 
-on:
-  push:
-    branches: [ "master", "main" ]
-  pull_request:
-    branches: [ "master", "main" ]
-  workflow_dispatch: # Cho phép nhấn nút build thủ công
+on: [workflow_dispatch] # Chạy thủ công cho chắc chắn
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: "Tải mã nguồn từ Repository"
+      - name: "Bước 1: Lấy code từ Auxilor"
         uses: actions/checkout@v4
+        with:
+          repository: Auxilor/EcoEnchants
+          # Chúng ta lấy toàn bộ lịch sử để Gradle xác định được version
+          fetch-depth: 0 
 
-      - name: "Thiết lập môi trường Java (JDK 21)"
+      - name: "Bước 2: Cài đặt JDK"
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: "Cấp quyền thực thi cho Gradle Wrapper"
-        run: chmod +x gradlew
+      - name: "Bước 3: Cấp quyền và Build"
+        # Sử dụng shell bash để đảm bảo lệnh chạy mượt mà
+        run: |
+          chmod +x gradlew
+          ./gradlew assemble
 
-      - name: "Tiến hành Build với Gradle"
-        run: ./gradlew build
-
-      - name: "Lưu trữ sản phẩm (Artifacts)"
+      - name: "Bước 4: Xuất file JAR"
         uses: actions/upload-artifact@v4
         with:
-          name: EcoEnchants-Plugin
-          path: build/libs/*.jar
-          if-no-files-found: error
+          name: EcoEnchants-Latest
+          path: "**/build/libs/*.jar" # Tìm kiếm đệ quy để tránh sót file
