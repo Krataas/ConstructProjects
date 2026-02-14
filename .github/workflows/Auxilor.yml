@@ -1,4 +1,4 @@
-name: "Build EcoEnchants - Chuẩn ConstructProjects 2026"
+name: "Xây dựng EcoEnchants - Bản Fix Cuối"
 
 on:
   workflow_dispatch:
@@ -7,13 +7,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: "Cài đặt Java"
+      - name: "Cài đặt Java 21"
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: "Build LibreForge (MavenLocal)"
+      - name: "Build LibreForge"
         run: |
           git clone https://github.com/Auxilor/LibreForge.git
           cd LibreForge && chmod +x gradlew && ./gradlew publishToMavenLocal -x test
@@ -26,25 +26,27 @@ jobs:
           submodules: 'recursive'
           fetch-depth: 0
 
-      - name: "Build với lệnh đặc biệt Reobf"
-        # Thay vì assemble, ta dùng reobfJar để ép nó đóng gói mã nguồn đã remap
+      - name: "Build Module Paper"
+        # Module 'paper' là nơi Auxilor đóng gói plugin cuối cùng
         run: |
           chmod +x gradlew
-          ./gradlew reobfJar --no-daemon -x test
+          ./gradlew :paper:build -x test --no-daemon
 
-      - name: "Hốt file theo kiểu HSGamer (Nhưng thông minh hơn)"
+      - name: "Thu thập sản phẩm"
         run: |
           mkdir -p output
-          # Tìm các file JAR nằm trong thư mục mang tên 'plugin' 
-          # và phải có dung lượng lớn (loại bỏ mấy file mapping vài trăm KB)
-          find . -type f -name "*.jar" -size +2M -path "*/build/libs/*" -exec cp {} output/ \;
+          # Tìm file JAR trong module paper, bỏ qua các file không phải plugin chính
+          find paper/build/libs/ -type f -name "*.jar" \
+            ! -name "*-sources.jar" \
+            ! -name "*-javadoc.jar" \
+            ! -name "*-dev.jar" \
+            -exec cp {} output/ \;
           
-          # Đổi tên cho dễ nhận biết
-          cd output
-          for f in *.jar; do mv "$f" "EcoEnchants-Pro-Build.jar"; break; done
+          echo "Danh sách file thu được:"
+          ls -lh output/
 
       - name: "Upload sản phẩm"
         uses: actions/upload-artifact@v4
         with:
-          name: EcoEnchants-Plugin
+          name: EcoEnchants-Paper-Plugin
           path: output/*.jar
