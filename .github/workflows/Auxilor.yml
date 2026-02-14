@@ -1,4 +1,4 @@
-name: "Xây dựng EcoEnchants (Phong cách ConstructProjects)"
+name: "Xây dựng EcoEnchants (Bản lọc sạch)"
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: "Bước 2: Tải LibreForge (Dependency nền tảng)"
+      - name: "Bước 2: Build LibreForge (Thư viện nền)"
         run: |
           git clone https://github.com/Auxilor/LibreForge.git
           cd LibreForge
@@ -29,25 +29,32 @@ jobs:
           submodules: 'recursive'
           fetch-depth: 0
 
-      - name: "Bước 4: Build tổng lực (Phong cách HSGamer)"
-        # Chúng ta không dùng :platform hay :plugin nữa
-        # Thay vào đó, dùng lệnh assemble tổng quát và ép MavenLocal vào
+      - name: "Bước 4: Build tổng lực"
         run: |
           chmod +x gradlew
-          ./gradlew assemble --no-daemon -x test -Dmaven.repo.local=$HOME/.m2/repository
+          # build thay vì assemble để kích hoạt các plugin đóng gói sâu hơn
+          ./gradlew build -x test --no-daemon
 
-      - name: "Bước 5: Tìm kiếm và Phân loại sản phẩm"
-        # Thay vì đoán folder, chúng ta dùng lệnh tìm kiếm của Linux để liệt kê
-        # và chỉ lấy những file JAR có kích thước đáng tin cậy (> 2MB)
+      - name: "Bước 5: Lọc file Plugin chính chủ"
+        # Chiến thuật: Tìm file .jar trong các thư mục build/libs/ 
+        # NHƯNG phải có chữ 'EcoEnchants' trong tên và KHÔNG chứa 'mapped', 'mojang', 'paper'
         run: |
-          mkdir -p output
-          find . -name "*.jar" -type f -size +2M -exec cp {} output/ \;
-          echo "Danh sách các file đã tìm thấy:"
-          ls -lh output/
+          mkdir -p final_output
+          find . -name "*.jar" -path "*/build/libs/*" -type f -size +1M \
+            -iname "*EcoEnchants*" \
+            ! -iname "*mapped*" \
+            ! -iname "*mojang*" \
+            ! -iname "*paper*" \
+            ! -iname "*-sources*" \
+            ! -iname "*-javadoc*" \
+            -exec cp {} final_output/ \;
+          
+          echo "Các file JAR tìm thấy sau khi lọc:"
+          ls -lh final_output/
 
-      - name: "Bước 6: Xuất file JAR cuối cùng"
+      - name: "Bước 6: Xuất Plugin"
         uses: actions/upload-artifact@v4
         with:
-          name: EcoEnchants-Package
-          path: output/*.jar
+          name: EcoEnchants-Final-Plugin
+          path: final_output/*.jar
           if-no-files-found: error
