@@ -1,26 +1,31 @@
-name: Build EcoEnchants
+name: Build All Eco Plugins
 
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
-  workflow_dispatch: # Allows manual triggering
-  schedule:
-    - cron: '0 0 * * 0' # Weekly build on Sunday at midnight
+  workflow_dispatch:
+    inputs:
+      plugin:
+        description: 'Which plugin to build (or "all")'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - EcoEnchants
+          - EcoItems
+          - EcoSkills
+          - EcoJobs
+          - EcoArmor
 
 jobs:
-  build:
+  build-dependencies:
     runs-on: ubuntu-latest
+    outputs:
+      libreforge-version: ${{ steps.versions.outputs.libreforge }}
+      eco-version: ${{ steps.versions.outputs.eco }}
     
     steps:
-    - name: Checkout EcoEnchants Repository
-      uses: actions/checkout@v4
-      with:
-        repository: Auxilor/EcoEnchants
-        ref: master # or main, check the default branch
-        submodules: recursive
-    
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
@@ -28,36 +33,22 @@ jobs:
         distribution: 'temurin'
         cache: 'gradle'
     
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+    # Build eco (core library)
+    - name: Checkout eco Repository
+      uses: actions/checkout@v4
+      with:
+        repository: Auxilor/eco
+        path: eco
+        submodules: recursive
     
-    - name: Build with Gradle
-      run: ./gradlew build --no-daemon
+    - name: Build eco
+      working-directory: ./eco
+      run: |
+        chmod +x gradlew
+        ./gradlew build publishToMavenLocal --no-daemon
     
-    - name: Get version from build
-      id: get_version
+    - name: Get eco version
+      id: get_eco_version
+      working-directory: ./eco
       run: |
         VERSION=$(./gradlew properties --no-daemon | grep "^version:" | awk '{print $2}')
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "Building version: $VERSION"
-    
-    - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: EcoEnchants-${{ steps.get_version.outputs.version }}
-        path: |
-          eco-core/core-plugin/build/libs/*.jar
-          !eco-core/core-plugin/build/libs/*-dev.jar
-          !eco-core/core-plugin/build/libs/*-sources.jar
-        retention-days: 90
-    
-    - name: Create Release (on tag)
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          eco-core/core-plugin/build/libs/*.jar
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
