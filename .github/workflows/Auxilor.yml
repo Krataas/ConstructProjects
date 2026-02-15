@@ -1,4 +1,4 @@
-name: "Xây dựng EcoEnchants - Bản Quyết Định"
+name: "Niggers"
 
 on:
   workflow_dispatch:
@@ -7,13 +7,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: "Cài đặt Java 21"
+      - name: "Thiết lập Java 21"
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: "Build LibreForge (MavenLocal)"
+      - name: "Build LibreForge"
         run: |
           git clone https://github.com/Auxilor/LibreForge.git
           cd LibreForge && chmod +x gradlew && ./gradlew publishToMavenLocal -x test
@@ -26,26 +26,21 @@ jobs:
           submodules: 'recursive'
           fetch-depth: 0
 
-      - name: "Build Tổng Lực (All Modules)"
-        # Lệnh này sẽ quét mọi module và chạy task shadowJar nếu có, hoặc build nếu không.
-        # -Pforce-shadow là một trick để kích hoạt đóng gói đầy đủ class.
+      - name: "Build với Reobf (Lệnh sống còn)"
+        # Lệnh này sẽ ép Paperweight thực hiện remap class và đóng gói plugin
         run: |
           chmod +x gradlew
-          ./gradlew assemble --no-daemon -x test
+          ./gradlew reobfJar --no-daemon -x test
 
-      - name: "Lọc và Trích xuất Plugin Chính"
+      - name: "Trích xuất file JAR từ mọi ngóc ngách"
         run: |
           mkdir -p output
-          # 1. Tìm tất cả file JAR nặng trên 1MB
-          # 2. Loại bỏ các file có chữ 'mapped', 'paperweight', 'sources', 'javadoc'
-          # 3. Ưu tiên các file nằm trong folder 'build/libs' của các module con
-          find . -type f -name "*.jar" -size +1M \
-            -path "*/build/libs/*" \
+          # Nới lỏng bộ lọc: Lấy tất cả file JAR > 2MB bất kể nằm ở đâu
+          # Chỉ loại trừ những thứ chắc chắn là rác (cache, mappings)
+          find . -name "*.jar" -type f -size +2M \
+            ! -path "*/.gradle/*" \
             ! -name "*mapped*" \
             ! -name "*paperweight*" \
-            ! -name "*-sources.jar" \
-            ! -name "*-javadoc.jar" \
-            ! -name "*-dev.jar" \
             -exec cp {} output/ \;
           
           echo "--- KẾT QUẢ TÌM KIẾM ---"
@@ -54,6 +49,6 @@ jobs:
       - name: "Upload Plugin"
         uses: actions/upload-artifact@v4
         with:
-          name: EcoEnchants-Final-Build
+          name: EcoEnchants-Reobf-Build
           path: output/*.jar
           if-no-files-found: error
