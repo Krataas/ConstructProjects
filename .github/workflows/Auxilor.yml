@@ -1,4 +1,4 @@
-name: "Xây dựng EcoEnchants - Bản Fix Cuối"
+name: "Xây dựng EcoEnchants - Bản Quyết Định"
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: "Build LibreForge"
+      - name: "Build LibreForge (MavenLocal)"
         run: |
           git clone https://github.com/Auxilor/LibreForge.git
           cd LibreForge && chmod +x gradlew && ./gradlew publishToMavenLocal -x test
@@ -26,27 +26,34 @@ jobs:
           submodules: 'recursive'
           fetch-depth: 0
 
-      - name: "Build Module Paper"
-        # Module 'paper' là nơi Auxilor đóng gói plugin cuối cùng
+      - name: "Build Tổng Lực (All Modules)"
+        # Lệnh này sẽ quét mọi module và chạy task shadowJar nếu có, hoặc build nếu không.
+        # -Pforce-shadow là một trick để kích hoạt đóng gói đầy đủ class.
         run: |
           chmod +x gradlew
-          ./gradlew :paper:build -x test --no-daemon
+          ./gradlew assemble --no-daemon -x test
 
-      - name: "Thu thập sản phẩm"
+      - name: "Lọc và Trích xuất Plugin Chính"
         run: |
           mkdir -p output
-          # Tìm file JAR trong module paper, bỏ qua các file không phải plugin chính
-          find paper/build/libs/ -type f -name "*.jar" \
+          # 1. Tìm tất cả file JAR nặng trên 1MB
+          # 2. Loại bỏ các file có chữ 'mapped', 'paperweight', 'sources', 'javadoc'
+          # 3. Ưu tiên các file nằm trong folder 'build/libs' của các module con
+          find . -type f -name "*.jar" -size +1M \
+            -path "*/build/libs/*" \
+            ! -name "*mapped*" \
+            ! -name "*paperweight*" \
             ! -name "*-sources.jar" \
             ! -name "*-javadoc.jar" \
             ! -name "*-dev.jar" \
             -exec cp {} output/ \;
           
-          echo "Danh sách file thu được:"
+          echo "--- KẾT QUẢ TÌM KIẾM ---"
           ls -lh output/
 
-      - name: "Upload sản phẩm"
+      - name: "Upload Plugin"
         uses: actions/upload-artifact@v4
         with:
-          name: EcoEnchants-Paper-Plugin
+          name: EcoEnchants-Final-Build
           path: output/*.jar
+          if-no-files-found: error
